@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tasks - Sphere Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* TASK PAGE MOBILE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+        }
+        
+        /* Task Page Container */
+        .task-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-select {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            cursor: pointer;
+        }
+        
+        .period-select {
+            padding: 12px 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            background: #667eea;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 80px;
+        }
+        
+        /* Task Stats */
+        .task-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        /* Task List Container */
+        .task-list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        /* Task Sections */
+        .task-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .task-count {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Task Items */
+        .task-item {
+            background: white;
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .task-item.completed {
+            opacity: 0.7;
+            border-left-color: #48bb78;
+        }
+        
+        .task-item.overdue {
+            border-left-color: #f56565;
+        }
+        
+        /* Task Header */
+        .task-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+            margin-right: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .task-checkbox.checked {
+            background: #48bb78;
+            border-color: #48bb78;
+            color: white;
+        }
+        
+        .task-title {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .task-title.completed {
+            text-decoration: line-through;
+            color: #a0aec0;
+        }
+        
+        /* Priority Badge */
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .priority-high {
+            background: linear-gradient(135deg, #f56565, #ed64a6);
+            color: white;
+        }
+        
+        .priority-medium {
+            background: linear-gradient(135deg, #f6ad55, #ed8936);
+            color: white;
+        }
+        
+        .priority-low {
+            background: linear-gradient(135deg, #68d391, #48bb78);
+            color: white;
+        }
+        
+        /* Task Details */
+        .task-details {
+            margin-left: 39px;
+            margin-bottom: 15px;
+        }
+        
+        .task-description {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+        }
+        
+        .task-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .task-category {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #718096;
+        }
+        
+        .task-category i {
+            color: #a0aec0;
+        }
+        
+        /* Floating Action Buttons */
+        .fab-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .fab {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .fab-add {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .fab-share {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+        
+        /* No Tasks Message */
+        .no-tasks {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+        }
+        
+        .no-tasks i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+        }
+        
+        /* Scrollbar Styling */
+        .task-list-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .task-list-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .task-list-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 2px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 350px) {
+            .filter-controls {
+                flex-direction: column;
+            }
+            
+            .task-stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="task-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">My Tasks</h1>
+            
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <select class="filter-select">
+                    <option>All Tasks</option>
+                    <option>Current Tasks</option>
+                    <option>Upcoming Tasks</option>
+                    <option>Completed Tasks</option>
+                </select>
+                
+                <select class="period-select">
+                    <option>Today</option>
+                    <option>Week</option>
+                    <option>Month</option>
+                    <option>Custom</option>
+                </select>
+            </div>
+            
+            <!-- Task Stats -->
+            <div class="task-stats">
+                <div class="stat-item">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Task List Container -->
+        <div class="task-list-container">
+            <!-- Current Tasks Section -->
+            <div class="task-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-clock"></i>
+                        <span>Current Tasks</span>
+                        <span class="task-count">4</span>
+                    </div>
+                </div>
+                
+                <!-- Task Item 1 -->
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-checkbox" onclick="toggleTask(this)">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="task-title">Team Standup Meeting</div>
+                        <div class="priority-badge priority-high">High</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Daily sync with development team to discuss progress and blockers
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>09:00 AM - 09:30 AM</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Work</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Task Item 2 -->
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-title">Client Presentation</div>
+                        <div class="priority-badge priority-high">High</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Quarterly review presentation with ABC Corp executives
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>11:30 AM - 01:00 PM</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Client Meeting</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upcoming Tasks Section -->
+            <div class="task-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Upcoming Tasks</span>
+                        <span class="task-count">3</span>
+                    </div>
+                </div>
+                
+                <!-- Task Item 3 -->
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-title">Project Planning Session</div>
+                        <div class="priority-badge priority-medium">Medium</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Phase 3 roadmap discussion with project stakeholders
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>02:00 PM - 03:30 PM</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Project</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Task Item 4 -->
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-title">Design Review</div>
+                        <div class="priority-badge priority-medium">Medium</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Feedback session for new UI mockups with design team
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>04:30 PM - 05:30 PM</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-palette"></i>
+                                <span>Design</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Incomplete Tasks Section -->
+            <div class="task-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Incomplete Tasks</span>
+                        <span class="task-count">2</span>
+                    </div>
+                </div>
+                
+                <!-- Task Item 5 -->
+                <div class="task-item overdue">
+                    <div class="task-header">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-title">Submit Monthly Report</div>
+                        <div class="priority-badge priority-high">High</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Complete and submit monthly performance report to management
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>Overdue</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Report</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Task Item 6 -->
+                <div class="task-item">
+                    <div class="task-header">
+                        <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                        <div class="task-title">Update Project Documentation</div>
+                        <div class="priority-badge priority-low">Low</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Update API documentation for the new features
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>Tomorrow</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-code"></i>
+                                <span>Development</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Completed Tasks Section -->
+            <div class="task-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Completed Tasks</span>
+                        <span class="task-count">3</span>
+                    </div>
+                </div>
+                
+                <!-- Task Item 7 -->
+                <div class="task-item completed">
+                    <div class="task-header">
+                        <div class="task-checkbox checked" onclick="toggleTask(this)">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="task-title completed">Email Client Updates</div>
+                        <div class="priority-badge priority-medium">Medium</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Send weekly progress update to all project clients
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>Completed 10:30 AM</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-envelope"></i>
+                                <span>Communication</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Task Item 8 -->
+                <div class="task-item completed">
+                    <div class="task-header">
+                        <div class="task-checkbox checked" onclick="toggleTask(this)">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="task-title completed">Team Lunch Planning</div>
+                        <div class="priority-badge priority-low">Low</div>
+                    </div>
+                    
+                    <div class="task-details">
+                        <div class="task-description">
+                            Organize team lunch and confirm reservations
+                        </div>
+                        
+                        <div class="task-meta">
+                            <div class="task-time">
+                                <i class="far fa-clock"></i>
+                                <span>Completed Yesterday</span>
+                            </div>
+                            <div class="task-category">
+                                <i class="fas fa-utensils"></i>
+                                <span>Team Event</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating Action Buttons -->
+        <div class="fab-container">
+            <div class="fab fab-share" onclick="shareTasks()">
+                <i class="fas fa-share-alt"></i>
+            </div>
+            <div class="fab fab-add" onclick="addTask()">
+                <i class="fas fa-plus"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle task completion
+        function toggleTask(checkbox) {
+            const taskItem = checkbox.closest('.task-item');
+            const taskTitle = taskItem.querySelector('.task-title');
+            
+            checkbox.classList.toggle('checked');
+            
+            if (checkbox.classList.contains('checked')) {
+                checkbox.innerHTML = '<i class="fas fa-check"></i>';
+                taskItem.classList.add('completed');
+                taskTitle.classList.add('completed');
+            } else {
+                checkbox.innerHTML = '';
+                taskItem.classList.remove('completed');
+                taskTitle.classList.remove('completed');
+            }
+            
+            updateTaskCounts();
+        }
+        
+        // Update task counts
+        function updateTaskCounts() {
+            const totalTasks = document.querySelectorAll('.task-item').length;
+            const completedTasks = document.querySelectorAll('.task-item.completed').length;
+            const pendingTasks = totalTasks - completedTasks;
+            
+            // Update stats
+            document.querySelectorAll('.stat-value')[0].textContent = totalTasks;
+            document.querySelectorAll('.stat-value')[1].textContent = pendingTasks;
+            document.querySelectorAll('.stat-value')[2].textContent = completedTasks;
+            
+            // Update section counts
+            const currentCount = document.querySelectorAll('.task-section:nth-child(1) .task-item').length;
+            const upcomingCount = document.querySelectorAll('.task-section:nth-child(2) .task-item').length;
+            const incompleteCount = document.querySelectorAll('.task-section:nth-child(3) .task-item:not(.completed)').length;
+            const completedCount = document.querySelectorAll('.task-section:nth-child(4) .task-item.completed').length;
+            
+            document.querySelectorAll('.task-count')[0].textContent = currentCount;
+            document.querySelectorAll('.task-count')[1].textContent = upcomingCount;
+            document.querySelectorAll('.task-count')[2].textContent = incompleteCount;
+            document.querySelectorAll('.task-count')[3].textContent = completedCount;
+        }
+        
+        // Add new task
+        function addTask() {
+            const newTask = prompt('Enter new task title:');
+            if (newTask) {
+                alert(`Task "${newTask}" added successfully!`);
+                // In real app, you would add to the task list
+            }
+        }
+        
+        // Share tasks
+        function shareTasks() {
+            alert('Sharing tasks...');
+            // In real app, you would implement sharing functionality
+        }
+        
+        // Filter tasks
+        document.querySelector('.filter-select').addEventListener('change', function() {
+            const filter = this.value;
+            alert(`Filtering tasks: ${filter}`);
+            // In real app, you would filter the task list
+        });
+        
+        // Period filter
+        document.querySelector('.period-select').addEventListener('change', function() {
+            const period = this.value;
+            alert(`Showing tasks for: ${period}`);
+            // In real app, you would filter by period
+        });
+        
+        // Initialize counts
+        updateTaskCounts();
+        
+        // Prevent zoom
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>

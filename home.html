@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Sphere Schedule</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --accent: #f687b3;
+            --success: #48bb78;
+            --warning: #f6ad55;
+            --danger: #f56565;
+            --light: #f7fafc;
+            --dark: #2d3748;
+            --gray: #718096;
+            --gray-light: #e2e8f0;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .home-container {
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: var(--radius);
+            padding: 25px;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .welcome-content h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .welcome-content p {
+            opacity: 0.9;
+            font-size: 15px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-light);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-title {
+            font-size: 13px;
+            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Section Titles */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-link {
+            font-size: 14px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* Upcoming Tasks */
+        .upcoming-tasks {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid var(--gray-light);
+        }
+        
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .task-item.urgent {
+            border-left-color: var(--danger);
+        }
+        
+        .task-item.completed {
+            border-left-color: var(--success);
+            opacity: 0.7;
+        }
+        
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--gray-light);
+            margin-right: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .task-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        
+        .task-content {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .task-desc {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+        }
+        
+        .task-time {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .task-location {
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Calendar Preview */
+        .calendar-preview {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid var(--gray-light);
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--light);
+            border: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .day:hover {
+            background: var(--light);
+        }
+        
+        .day.today {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .day.has-task::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+        
+        .day.weekend {
+            color: var(--danger);
+        }
+        
+        .day.other-month {
+            color: var(--gray-light);
+        }
+        
+        /* Productivity Chart */
+        .productivity-chart {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-light);
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            height: 150px;
+            gap: 10px;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 6px 6px 0 0;
+            min-height: 20px;
+            position: relative;
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+            background: white;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+        }
+        
+        .action-btn:hover .action-icon {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .action-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .home-container {
+                padding: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <h2>Welcome back, Alex! 👋</h2>
+                <p>Here's what's happening with your schedule today.</p>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Today's Tasks</div>
+                    <div class="stat-icon" style="background: rgba(102, 126, 234, 0.1); color: var(--primary);">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                </div>
+                <div class="stat-value">12</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+2 from yesterday</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Completed</div>
+                    <div class="stat-icon" style="background: rgba(72, 187, 120, 0.1); color: var(--success);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value">8</div>
+                <div class="stat-change">67% done</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Upcoming Meetings</div>
+                    <div class="stat-icon" style="background: rgba(246, 173, 85, 0.1); color: var(--warning);">
+                        <i class="fas fa-video"></i>
+                    </div>
+                </div>
+                <div class="stat-value">4</div>
+                <div class="stat-change">Next in 45min</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Productivity</div>
+                    <div class="stat-icon" style="background: rgba(118, 75, 162, 0.1); color: var(--secondary);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="stat-value">92%</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+5% this week</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upcoming Tasks -->
+        <div class="section-title">
+            <span>Upcoming Tasks</span>
+            <a href="#" class="section-link">View All</a>
+        </div>
+        
+        <div class="upcoming-tasks">
+            <div class="task-list">
+                <div class="task-item completed">
+                    <div class="task-checkbox checked">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-title">Team Standup Meeting</div>
+                        <div class="task-desc">Daily sync with development team</div>
+                        <div class="task-meta">
+                            <span class="task-time">09:00 AM</span>
+                            <span class="task-location">
+                                <i class="fas fa-map-marker-alt"></i> Conference Room A
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="task-item urgent">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Client Presentation - URGENT</div>
+                        <div class="task-desc">Quarterly review with ABC Corp</div>
+                        <div class="task-meta">
+                            <span class="task-time">11:30 AM</span>
+                            <span class="task-location">
+                                <i class="fas fa-map-marker-alt"></i> ABC Corp Office
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Project Review Session</div>
+                        <div class="task-desc">Phase 3 roadmap discussion</div>
+                        <div class="task-meta">
+                            <span class="task-time">02:00 PM</span>
+                            <span class="task-location">
+                                <i class="fas fa-video"></i> Remote
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-checkbox"></div>
+                    <div class="task-content">
+                        <div class="task-title">Design Feedback Session</div>
+                        <div class="task-desc">Review new UI mockups with design team</div>
+                        <div class="task-meta">
+                            <span class="task-time">04:30 PM</span>
+                            <span class="task-location">
+                                <i class="fas fa-map-marker-alt"></i> Design Studio
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Calendar Preview -->
+        <div class="section-title">
+            <span>January 2026</span>
+            <a href="#" class="section-link">View Calendar</a>
+        </div>
+        
+        <div class="calendar-preview">
+            <div class="calendar-header">
+                <div class="calendar-title">Today: January 27</div>
+                <div class="calendar-nav">
+                    <button class="nav-btn" onclick="changeMonth(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-btn" onclick="goToToday()">Today</button>
+                    <button class="nav-btn" onclick="changeMonth(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            
+            <div class="days-grid" id="calendarGrid">
+                <!-- Calendar will be generated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Productivity Chart -->
+        <div class="section-title">
+            <span>Weekly Productivity</span>
+            <a href="#" class="section-link">View Details</a>
+        </div>
+        
+        <div class="productivity-chart">
+            <div class="chart-bars">
+                <div class="bar" style="height: 40%;">
+                    <div class="bar-label">Mon</div>
+                </div>
+                <div class="bar" style="height: 70%;">
+                    <div class="bar-label">Tue</div>
+                </div>
+                <div class="bar" style="height: 90%;">
+                    <div class="bar-label">Wed</div>
+                </div>
+                <div class="bar" style="height: 60%;">
+                    <div class="bar-label">Thu</div>
+                </div>
+                <div class="bar" style="height: 80%;">
+                    <div class="bar-label">Fri</div>
+                </div>
+                <div class="bar" style="height: 50%;">
+                    <div class="bar-label">Sat</div>
+                </div>
+                <div class="bar" style="height: 30%;">
+                    <div class="bar-label">Sun</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="section-title">
+            <span>Quick Actions</span>
+        </div>
+        
+        <div class="quick-actions">
+            <a href="#" class="action-btn" onclick="quickAction('addTask')">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="action-label">New Task</div>
+            </a>
+            
+            <a href="#" class="action-btn" onclick="quickAction('scheduleMeeting')">
+                <div class="action-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="action-label">Schedule Meeting</div>
+            </a>
+            
+            <a href="#" class="action-btn" onclick="quickAction('addNote')">
+                <div class="action-icon">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <div class="action-label">Add Note</div>
+            </a>
+            
+            <a href="#" class="action-btn" onclick="quickAction('share')">
+                <div class="action-icon">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <div class="action-label">Share Schedule</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Calendar Data
+        const taskDays = [3, 5, 8, 12, 15, 18, 20, 22, 25, 27, 29];
+        let currentDate = new Date(2026, 0, 27); // January 27, 2026
+        const today = new Date(2026, 0, 27);
+        
+        // Generate Calendar
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            if (!calendarGrid) return;
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Get first day of month
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+            
+            // Clear calendar
+            calendarGrid.innerHTML = '';
+            
+            // Previous month days
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const day = document.createElement('div');
+                day.className = 'day other-month';
+                day.textContent = prevMonthLastDay - i;
+                calendarGrid.appendChild(day);
+            }
+            
+            // Current month days
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                day.className = 'day';
+                day.textContent = i;
+                
+                // Check if it's today
+                if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    day.classList.add('today');
+                }
+                
+                // Check if it's weekend
+                const dayOfWeek = new Date(year, month, i).getDay();
+                if (dayOfWeek === 0 || dayOfWeek === 6) {
+                    day.classList.add('weekend');
+                }
+                
+                // Check if day has tasks
+                if (taskDays.includes(i)) {
+                    day.classList.add('has-task');
+                }
+                
+                // Add click event
+                day.addEventListener('click', () => {
+                    alert(`Selected ${monthNames[month]} ${i}, ${year}`);
+                });
+                
+                calendarGrid.appendChild(day);
+            }
+            
+            // Next month days
+            const totalCells = 42; // 6 rows * 7 columns
+            const nextMonthDays = totalCells - (startingDay + daysInMonth);
+            for (let i = 1; i <= nextMonthDays; i++) {
+                const day = document.createElement('div');
+                day.className = 'day other-month';
+                day.textContent = i;
+                calendarGrid.appendChild(day);
+            }
+        }
+        
+        // Change month
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            generateCalendar();
+        }
+        
+        // Go to today
+        function goToToday() {
+            currentDate = new Date(2026, 0, 27);
+            generateCalendar();
+        }
+        
+        // Task checkbox toggle
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.task-checkbox')) {
+                const checkbox = e.target.closest('.task-checkbox');
+                const taskItem = checkbox.closest('.task-item');
+                
+                checkbox.classList.toggle('checked');
+                if (checkbox.classList.contains('checked')) {
+                    checkbox.innerHTML = '<i class="fas fa-check"></i>';
+                    taskItem.classList.add('completed');
+                } else {
+                    checkbox.innerHTML = '';
+                    taskItem.classList.remove('completed');
+                }
+            }
+        });
+        
+        // Quick actions
+        function quickAction(action) {
+            const actions = {
+                'addTask': 'Adding new task...',
+                'scheduleMeeting': 'Scheduling meeting...',
+                'addNote': 'Adding note...',
+                'share': 'Sharing schedule...'
+            };
+            
+            if (actions[action]) {
+                alert(actions[action]);
+            }
+        }
+        
+        // Initialize calendar when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', generateCalendar);
+        } else {
+            generateCalendar();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sphere Schedule - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* MOBILE-ONLY STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+            touch-action: manipulation;
+        }
+        
+        /* Mobile Container */
+        .mobile-login {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* App Header */
+        .app-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .app-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .app-tagline {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+        
+        /* Login Form */
+        .login-form {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: block;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #f7fafc;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #a0aec0;
+            font-size: 14px;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        /* Social Login */
+        .social-login {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .social-icon {
+            font-size: 20px;
+        }
+        
+        .google { color: #DB4437; }
+        .microsoft { color: #00A4EF; }
+        .apple { color: #000; }
+        
+        .social-name {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Skip Section */
+        .skip-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .skip-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 15px 25px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Sign Up Link */
+        .signup-link {
+            text-align: center;
+            margin-top: 25px;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+        
+        .signup-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Responsive for different mobile sizes */
+        @media (max-height: 700px) {
+            .app-header {
+                margin-bottom: 20px;
+            }
+            
+            .app-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+            
+            .login-form {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 350px) {
+            .social-login {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-login">
+        <div class="app-header">
+            <div class="app-icon">S</div>
+            <h1 class="app-title">Sphere Schedule</h1>
+            <p class="app-tagline">Organize your day</p>
+        </div>
+        
+        <div class="login-form">
+            <div class="input-group">
+                <label class="input-label">User ID</label>
+                <input type="text" class="input-field" placeholder="Enter your ID">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Password</label>
+                <input type="password" class="input-field" placeholder="Enter password">
+            </div>
+            
+            <button class="login-btn" onclick="login()">Sign In</button>
+            
+            <div class="divider">
+                <span>Or continue with</span>
+            </div>
+            
+            <div class="social-login">
+                <button class="social-btn" onclick="socialLogin('google')">
+                    <i class="fab fa-google social-icon google"></i>
+                    <span class="social-name">Google</span>
+                </button>
+                
+                <button class="social-btn" onclick="socialLogin('microsoft')">
+                    <i class="fab fa-microsoft social-icon microsoft"></i>
+                    <span class="social-name">Microsoft</span>
+                </button>
+                
+                <button class="social-btn" onclick="socialLogin('apple')">
+                    <i class="fab fa-apple social-icon apple"></i>
+                    <span class="social-name">iPhone</span>
+                </button>
+            </div>
+            
+            <div class="skip-section">
+                <a href="mainframe.html" class="skip-btn">
+                    <span>Skip all this</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        
+        <p class="signup-link">
+            Don't have an account? <a href="#">Sign up</a>
+        </p>
+    </div>
+
+    <script>
+        // Simple login functions
+        function login() {
+            // Save login state
+            localStorage.setItem('isLoggedIn', 'true');
+            // Redirect to mainframe
+            window.location.href = 'mainframe.html';
+        }
+        
+        function socialLogin(provider) {
+            alert(`Logging in with ${provider}...`);
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('loginProvider', provider);
+            window.location.href = 'mainframe.html';
+        }
+        
+        // Prevent zoom on mobile
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Check if already logged in
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'mainframe.html';
+        }
+    </script>
+</body>
+</html>
