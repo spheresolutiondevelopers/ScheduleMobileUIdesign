@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Settings - Sphere Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* SETTINGS PAGE MOBILE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #1e293b;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+        }
+        
+        /* Settings Container */
+        .settings-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 25px 20px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+        
+        .page-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: #0f172a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Settings Sections */
+        .settings-section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8fafc;
+        }
+        
+        .section-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        
+        /* APP SETTINGS STYLES */
+        
+        /* Theme Selection */
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .theme-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-card.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .theme-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .theme-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .theme-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        /* Color Schemes */
+        .color-schemes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .color-option {
+            height: 60px;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .color-option.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* Font Size Slider */
+        .slider-container {
+            margin: 30px 0;
+        }
+        
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .slider-label {
+            font-weight: 600;
+            color: #334155;
+        }
+        
+        .slider-value {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #dbeafe, #3b82f6);
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3b82f6;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        
+        /* Settings Items */
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            background: #f8fafc;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        
+        .setting-item:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+        }
+        
+        .setting-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .setting-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .setting-text h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1e293b;
+        }
+        
+        .setting-text p {
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider-toggle {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider-toggle:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider-toggle {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+        }
+        
+        input:checked + .slider-toggle:before {
+            transform: translateX(30px);
+        }
+        
+        /* Select Dropdown */
+        .select-dropdown {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+            min-width: 150px;
+            cursor: pointer;
+        }
+        
+        /* USER SETTINGS STYLES */
+        
+        /* Profile Header */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #3b82f6;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .profile-info h3 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        /* Form Groups */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            color: #475569;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            background: white;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Timezone Section */
+        .timezone-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .timezone-current {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .timezone-flag {
+            font-size: 24px;
+        }
+        
+        /* Security Settings */
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn-primary {
+            flex: 2;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            padding: 16px;
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Scrollbar */
+        .tab-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .tab-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 350px) {
+            .theme-options, .color-schemes, .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Settings</h1>
+            <p class="page-subtitle">Customize your Sphere Schedule experience</p>
+            
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="app">
+                    <i class="fas fa-sliders-h"></i>
+                    App Settings
+                </button>
+                <button class="tab-btn" data-tab="user">
+                    <i class="fas fa-user-cog"></i>
+                    User Settings
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- APP SETTINGS TAB -->
+            <div class="tab-pane active" id="app-tab">
+                <!-- Theme Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3 class="section-title">Theme & Appearance</h3>
+                    </div>
+                    
+                    <!-- Theme Selection -->
+                    <h4 style="margin-bottom: 15px; color: #475569; font-weight: 600;">Theme Mode</h4>
+                    <div class="theme-options">
+                        <div class="theme-card selected" data-theme="light">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); color: #1e293b;">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <div class="theme-name">Light Mode</div>
+                            <div class="theme-desc">Default bright theme</div>
+                        </div>
+                        
+                        <div class="theme-card" data-theme="dark">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white;">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="theme-name">Dark Mode</div>
+                            <div class="theme-desc">Easy on eyes</div>
+                        </div>
+                        
+                        <div class="theme-card" data-theme="auto">
+                            <div class="theme-preview" style="background: linear-gradient(135deg, #3b82f6, #6366f1); color: white;">
+                                <i class="fas fa-adjust"></i>
+                            </div>
+                            <div class="theme-name">Auto</div>
+                            <div class="theme-desc">System preference</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Color Schemes -->
+                    <h4 style="margin: 25px 0 15px; color: #475569; font-weight: 600;">Color Scheme</h4>
+                    <div class="color-schemes">
+                        <div class="color-option selected" style="background: linear-gradient(135deg, #3b82f6, #6366f1);" data-color="blue"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);" data-color="purple"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #10b981, #059669);" data-color="green"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #f59e0b, #d97706);" data-color="amber"></div>
+                    </div>
+                </div>
+                
+                <!-- Display Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3 class="section-title">Display Settings</h3>
+                    </div>
+                    
+                    <!-- Font Size Slider -->
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span class="slider-label">Font Size</span>
+                            <span class="slider-value" id="fontSizeValue">Medium</span>
+                        </div>
+                        <input type="range" min="12" max="20" value="16" class="slider" id="fontSizeSlider">
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: #64748b;">
+                            <span>Small</span>
+                            <span>Medium</span>
+                            <span>Large</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Display Options -->
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-border-all"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Compact Mode</h4>
+                                    <p>Show more content in less space</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-animation"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Animations</h4>
+                                    <p>Enable smooth transitions and effects</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Reduce Motion</h4>
+                                    <p>Minimize animations for accessibility</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notification Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3 class="section-title">Notifications</h3>
+                    </div>
+                    
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Meeting Reminders</h4>
+                                    <p>Get notified before meetings start</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Task Due Dates</h4>
+                                    <p>Notifications for upcoming deadlines</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Daily Reports</h4>
+                                    <p>Receive daily productivity summaries</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Settings -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3 class="section-title">Data & Sync</h3>
+                    </div>
+                    
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Auto Sync</h4>
+                                    <p>Sync data automatically across devices</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-wifi"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Wi-Fi Only Sync</h4>
+                                    <p>Only sync when connected to Wi-Fi</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Backup & Restore</h4>
+                                    <p>Last backup: Today, 10:30 AM</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary" style="padding: 8px 16px; font-size: 14px;">Backup Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- USER SETTINGS TAB -->
+            <div class="tab-pane" id="user-tab">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">AJ</div>
+                    <div class="profile-info">
+                        <h3>Alex Johnson</h3>
+                        <p>alex.johnson@example.com</p>
+                        <p style="margin-top: 5px; font-size: 13px;">Premium Member • Since Jan 2024</p>
+                    </div>
+                </div>
+                
+                <!-- Personal Information -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #3b82f6, #6366f1);">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <h3 class="section-title">Personal Information</h3>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-input" value="Alex">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-input" value="Johnson">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" value="alex.johnson@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-input" value="+1 (555) 123-4567">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Job Title</label>
+                        <input type="text" class="form-input" value="Product Manager">
+                    </div>
+                </div>
+                
+                <!-- Time & Language -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="section-title">Time & Language</h3>
+                    </div>
+                    
+                    <!-- Timezone -->
+                    <div class="timezone-section">
+                        <div class="timezone-current">
+                            <div class="timezone-flag">🇺🇸</div>
+                            <div>
+                                <div style="font-weight: 600;">Eastern Time (ET)</div>
+                                <div style="font-size: 13px; color: #64748b;">UTC-05:00 • New York</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Select Timezone</label>
+                            <select class="select-dropdown">
+                                <option selected>Eastern Time (UTC-5)</option>
+                                <option>Central Time (UTC-6)</option>
+                                <option>Mountain Time (UTC-7)</option>
+                                <option>Pacific Time (UTC-8)</option>
+                                <option>London (UTC+0)</option>
+                                <option>Paris (UTC+1)</option>
+                                <option>Tokyo (UTC+9)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Format -->
+                    <div class="form-group">
+                        <label class="form-label">Time Format</label>
+                        <div style="display: flex; gap: 15px; margin-top: 10px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" name="timeFormat" checked>
+                                <span>12-hour (2:30 PM)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" name="timeFormat">
+                                <span>24-hour (14:30)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Date Format -->
+                    <div class="form-group">
+                        <label class="form-label">Date Format</label>
+                        <select class="select-dropdown">
+                            <option selected>MM/DD/YYYY (01/27/2026)</option>
+                            <option>DD/MM/YYYY (27/01/2026)</option>
+                            <option>YYYY-MM-DD (2026-01-27)</option>
+                            <option>Month D, YYYY (January 27, 2026)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Language -->
+                    <div class="form-group">
+                        <label class="form-label">Language</label>
+                        <select class="select-dropdown">
+                            <option selected>English (United States)</option>
+                            <option>English (United Kingdom)</option>
+                            <option>Español</option>
+                            <option>Français</option>
+                            <option>Deutsch</option>
+                            <option>日本語</option>
+                            <option>中文</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Security & Account -->
+                <div class="settings-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="section-title">Security & Account</h3>
+                        <div class="security-badge">
+                            <i class="fas fa-check-circle"></i>
+                            Account Secure
+                        </div>
+                    </div>
+                    
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Change Password</h4>
+                                    <p>Last changed 30 days ago</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary" style="padding: 8px 16px; font-size: 14px;">Change</button>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-fingerprint"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Two-Factor Authentication</h4>
+                                    <p>Add an extra layer of security</p>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider-toggle"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Device Management</h4>
+                                    <p>3 devices connected</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary" style="padding: 8px 16px; font-size: 14px;">Manage</button>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <div class="setting-text">
+                                    <h4>Login Activity</h4>
+                                    <p>Last login: Today, 09:15 AM</p>
+                                </div>
+                            </div>
+                            <button class="btn-secondary" style="padding: 8px 16px; font-size: 14px;">View</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="saveSettings()">
+                        <i class="fas fa-save"></i>
+                        Save All Changes
+                    </button>
+                    <button class="btn-secondary" onclick="resetSettings()">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show active tab pane
+                tabPanes.forEach(pane => {
+                    pane.classList.remove('active');
+                    if (pane.id === `${tabId}-tab`) {
+                        pane.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Theme Selection
+        const themeCards = document.querySelectorAll('.theme-card');
+        themeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                themeCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const theme = this.getAttribute('data-theme');
+                alert(`Theme changed to: ${theme} mode`);
+                // In real app, apply theme
+            });
+        });
+        
+        // Color Scheme Selection
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                colorOptions.forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const color = this.getAttribute('data-color');
+                alert(`Color scheme changed to: ${color}`);
+                // In real app, apply color scheme
+            });
+        });
+        
+        // Font Size Slider
+        const fontSizeSlider = document.getElementById('fontSizeSlider');
+        const fontSizeValue = document.getElementById('fontSizeValue');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            let sizeText = '';
+            
+            if (value <= 14) sizeText = 'Small';
+            else if (value <= 16) sizeText = 'Medium';
+            else sizeText = 'Large';
+            
+            fontSizeValue.textContent = sizeText;
+            
+            // In real app, apply font size
+            document.body.style.fontSize = `${value}px`;
+        });
+        
+        // Toggle Switches
+        const toggleSwitches = document.querySelectorAll('.toggle-switch input');
+        toggleSwitches.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const label = this.closest('.setting-item').querySelector('h4').textContent;
+                const state = this.checked ? 'enabled' : 'disabled';
+                console.log(`${label}: ${state}`);
+            });
+        });
+        
+        // Radio buttons for time format
+        const timeFormatRadios = document.querySelectorAll('input[name="timeFormat"]');
+        timeFormatRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    const format = this.nextElementSibling.textContent.trim();
+                    alert(`Time format changed to: ${format}`);
+                }
+            });
+        });
+        
+        // Select dropdowns
+        const selectDropdowns = document.querySelectorAll('.select-dropdown');
+        selectDropdowns.forEach(select => {
+            select.addEventListener('change', function() {
+                const label = this.closest('.form-group').querySelector('.form-label').textContent;
+                alert(`${label} changed to: ${this.value}`);
+            });
+        });
+        
+        // Form inputs
+        const formInputs = document.querySelectorAll('.form-input');
+        formInputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim() !== this.defaultValue) {
+                    console.log(`Field updated: ${this.value}`);
+                }
+            });
+        });
+        
+        // Action Functions
+        function saveSettings() {
+            alert('All settings have been saved successfully!');
+        }
+        
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to default?')) {
+                alert('Settings have been reset to default values.');
+                // In real app, reset all settings
+            }
+        }
+        
+        // Change Password
+        document.querySelectorAll('.btn-secondary').forEach(btn => {
+            if (btn.textContent.includes('Change') && btn.closest('.setting-item').querySelector('h4').textContent.includes('Password')) {
+                btn.addEventListener('click', function() {
+                    const newPassword = prompt('Enter new password:');
+                    if (newPassword) {
+                        alert('Password changed successfully!');
+                    }
+                });
+            }
+        });
+        
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            // Set current timezone offset
+            const timezoneOffset = new Date().getTimezoneOffset();
+            console.log(`Current timezone offset: ${timezoneOffset} minutes`);
+            
+            // Prevent zoom
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) e.preventDefault();
+            }, { passive: false });
+        });
+    </script>
+</body>
+</html>

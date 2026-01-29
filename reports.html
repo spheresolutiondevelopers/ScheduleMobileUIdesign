@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Reports - Sphere Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* REPORTS PAGE MOBILE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            color: #2d3748;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+        }
+        
+        /* Reports Container */
+        .reports-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .page-subtitle {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-share {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-print {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+        
+        .btn-share:hover, .btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Period Selector */
+        .period-selector {
+            display: flex;
+            gap: 5px;
+            margin-top: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        
+        .period-selector::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .period-tab {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        
+        .period-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* Reports Content */
+        .reports-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .summary-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .summary-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #f6ad55, #ed8936);
+        }
+        
+        .summary-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #48bb78, #38a169);
+        }
+        
+        .summary-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #f56565, #ed64a6);
+        }
+        
+        .summary-title {
+            font-size: 13px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .summary-change {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .change-up {
+            color: #48bb78;
+        }
+        
+        .change-down {
+            color: #f56565;
+        }
+        
+        /* Charts Section */
+        .charts-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        /* Bar Chart */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 10px;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+        
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .bar {
+            width: 100%;
+            border-radius: 8px 8px 0 0;
+            min-height: 20px;
+            position: relative;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .bar-label {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #718096;
+            text-align: center;
+        }
+        
+        /* Pie Chart */
+        .pie-chart-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            padding: 20px 0;
+        }
+        
+        .pie-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #667eea 0% 35%,
+                #f6ad55 35% 65%,
+                #48bb78 65% 85%,
+                #f56565 85% 100%
+            );
+            position: relative;
+        }
+        
+        .pie-center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .pie-legend {
+            flex: 1;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        .legend-label {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        
+        .legend-value {
+            margin-left: auto;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        /* Task Breakdown */
+        .breakdown-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .breakdown-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .breakdown-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .breakdown-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .breakdown-content {
+            flex: 1;
+        }
+        
+        .breakdown-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .breakdown-stats {
+            font-size: 13px;
+            color: #718096;
+        }
+        
+        .breakdown-percentage {
+            font-weight: 700;
+            font-size: 16px;
+            color: #2d3748;
+        }
+        
+        /* Productivity Trends */
+        .trend-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .trend-graph {
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            margin-top: 20px;
+        }
+        
+        .trend-bar {
+            flex: 1;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .trend-bar.active {
+            background: linear-gradient(to top, #48bb78, #38a169);
+        }
+        
+        /* Floating Download Button */
+        .fab-download {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .fab-download:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Scrollbar */
+        .reports-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .reports-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 2px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 350px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pie-chart-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="reports-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">General Report</h1>
+            <p class="page-subtitle">January 1 - 31, 2026 • Overall Performance</p>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn btn-share" onclick="shareReport()">
+                    <i class="fas fa-share-alt"></i>
+                    Share Report
+                </button>
+                <button class="action-btn btn-print" onclick="printReport()">
+                    <i class="fas fa-print"></i>
+                    Print Report
+                </button>
+            </div>
+            
+            <!-- Period Selector -->
+            <div class="period-selector">
+                <div class="period-tab active">Today</div>
+                <div class="period-tab">Week</div>
+                <div class="period-tab">Month</div>
+                <div class="period-tab">Quarter</div>
+                <div class="period-tab">Year</div>
+                <div class="period-tab">Custom</div>
+            </div>
+        </div>
+        
+        <!-- Reports Content -->
+        <div class="reports-content">
+            <!-- Summary Cards -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-title">
+                        <i class="fas fa-tasks"></i>
+                        Total Tasks
+                    </div>
+                    <div class="summary-value">142</div>
+                    <div class="summary-change change-up">
+                        <i class="fas fa-arrow-up"></i>
+                        12% from last month
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-title">
+                        <i class="fas fa-check-circle"></i>
+                        Completion Rate
+                    </div>
+                    <div class="summary-value">87%</div>
+                    <div class="summary-change change-up">
+                        <i class="fas fa-arrow-up"></i>
+                        5% from last month
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-title">
+                        <i class="fas fa-clock"></i>
+                        Avg. Time/Task
+                    </div>
+                    <div class="summary-value">2.4h</div>
+                    <div class="summary-change change-down">
+                        <i class="fas fa-arrow-down"></i>
+                        18% from last month
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-title">
+                        <i class="fas fa-chart-line"></i>
+                        Productivity
+                    </div>
+                    <div class="summary-value">92%</div>
+                    <div class="summary-change change-up">
+                        <i class="fas fa-arrow-up"></i>
+                        8% from last month
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weekly Performance Chart -->
+            <div class="charts-section">
+                <div class="section-header">
+                    <h3 class="section-title">Weekly Performance</h3>
+                    <span style="color: #718096; font-size: 14px;">Jan 20-26, 2026</span>
+                </div>
+                
+                <div class="bar-chart">
+                    <div class="bar-container">
+                        <div class="bar" style="height: 40%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <span class="bar-value">12</span>
+                        </div>
+                        <span class="bar-label">Mon</span>
+                    </div>
+                    
+                    <div class="bar-container">
+                        <div class="bar" style="height: 70%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <span class="bar-value">18</span>
+                        </div>
+                        <span class="bar-label">Tue</span>
+                    </div>
+                    
+                    <div class="bar-container">
+                        <div class="bar" style="height: 90%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <span class="bar-value">24</span>
+                        </div>
+                        <span class="bar-label">Wed</span>
+                    </div>
+                    
+                    <div class="bar-container">
+                        <div class="bar" style="height: 60%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <span class="bar-value">15</span>
+                        </div>
+                        <span class="bar-label">Thu</span>
+                    </div>
+                    
+                    <div class="bar-container">
+                        <div class="bar" style="height: 80%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <span class="bar-value">21</span>
+                        </div>
+                        <span class="bar-label">Fri</span>
+                    </div>
+                    
+                    <div class="bar-container">
+                        <div class="bar" style="height: 50%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <span class="bar-value">14</span>
+                        </div>
+                        <span class="bar-label">Sat</span>
+                    </div>
+                    
+                    <div class="bar-container">
+                        <div class="bar" style="height: 30%; background: linear-gradient(to top, #667eea, #764ba2);">
+                            <span class="bar-value">8</span>
+                        </div>
+                        <span class="bar-label">Sun</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Task Category Breakdown -->
+            <div class="pie-chart-container">
+                <div class="pie-chart">
+                    <div class="pie-center"></div>
+                </div>
+                
+                <div class="pie-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #667eea;"></div>
+                        <span class="legend-label">Work Tasks</span>
+                        <span class="legend-value">35%</span>
+                    </div>
+                    
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f6ad55;"></div>
+                        <span class="legend-label">Personal</span>
+                        <span class="legend-value">30%</span>
+                    </div>
+                    
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #48bb78;"></div>
+                        <span class="legend-label">Health</span>
+                        <span class="legend-value">20%</span>
+                    </div>
+                    
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f56565;"></div>
+                        <span class="legend-label">Learning</span>
+                        <span class="legend-value">15%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Task Breakdown List -->
+            <div class="breakdown-section">
+                <div class="section-header">
+                    <h3 class="section-title">Task Breakdown</h3>
+                    <span style="color: #718096; font-size: 14px;">By Priority & Status</span>
+                </div>
+                
+                <div class="breakdown-list">
+                    <div class="breakdown-item">
+                        <div class="breakdown-icon" style="background: linear-gradient(135deg, #f56565, #ed64a6);">
+                            <i class="fas fa-exclamation"></i>
+                        </div>
+                        <div class="breakdown-content">
+                            <div class="breakdown-title">High Priority Tasks</div>
+                            <div class="breakdown-stats">18 tasks • 4 overdue</div>
+                        </div>
+                        <div class="breakdown-percentage">24%</div>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-icon" style="background: linear-gradient(135deg, #f6ad55, #ed8936);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="breakdown-content">
+                            <div class="breakdown-title">Medium Priority</div>
+                            <div class="breakdown-stats">42 tasks • All on track</div>
+                        </div>
+                        <div class="breakdown-percentage">56%</div>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-icon" style="background: linear-gradient(135deg, #48bb78, #38a169);">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="breakdown-content">
+                            <div class="breakdown-title">Completed Tasks</div>
+                            <div class="breakdown-stats">124 tasks • 87% completion</div>
+                        </div>
+                        <div class="breakdown-percentage">76%</div>
+                    </div>
+                    
+                    <div class="breakdown-item">
+                        <div class="breakdown-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="breakdown-content">
+                            <div class="breakdown-title">Meetings & Calls</div>
+                            <div class="breakdown-stats">28 meetings • 92% attended</div>
+                        </div>
+                        <div class="breakdown-percentage">20%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Productivity Trends -->
+            <div class="trend-section">
+                <div class="section-header">
+                    <h3 class="section-title">Productivity Trends</h3>
+                    <span style="color: #718096; font-size: 14px;">Last 12 months</span>
+                </div>
+                
+                <div class="trend-graph">
+                    <div class="trend-bar" style="height: 30%;"></div>
+                    <div class="trend-bar" style="height: 45%;"></div>
+                    <div class="trend-bar" style="height: 60%;"></div>
+                    <div class="trend-bar" style="height: 75%;"></div>
+                    <div class="trend-bar" style="height: 85%;"></div>
+                    <div class="trend-bar" style="height: 92%;"></div>
+                    <div class="trend-bar active" style="height: 95%;"></div>
+                    <div class="trend-bar" style="height: 88%;"></div>
+                    <div class="trend-bar" style="height: 82%;"></div>
+                    <div class="trend-bar" style="height: 78%;"></div>
+                    <div class="trend-bar" style="height: 70%;"></div>
+                    <div class="trend-bar" style="height: 65%;"></div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: #718096;">
+                    <span>Jan</span>
+                    <span>Mar</span>
+                    <span>May</span>
+                    <span>Jul</span>
+                    <span>Sep</span>
+                    <span>Nov</span>
+                    <span>Jan</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating Download Button -->
+        <div class="fab-download" onclick="downloadReport()">
+            <i class="fas fa-download"></i>
+        </div>
+    </div>
+
+    <script>
+        // Period tabs
+        const periodTabs = document.querySelectorAll('.period-tab');
+        periodTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                periodTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const period = this.textContent;
+                alert(`Loading report for: ${period}`);
+                // In real app, you would fetch data for selected period
+            });
+        });
+        
+        // Share Report
+        function shareReport() {
+            alert('Sharing report...\nExport options: PDF, Excel, Image');
+            // In real app, you would implement sharing functionality
+        }
+        
+        // Print Report
+        function printReport() {
+            alert('Opening print preview...');
+            // In real app: window.print();
+        }
+        
+        // Download Report
+        function downloadReport() {
+            alert('Downloading report as PDF...');
+            // In real app, you would generate and download PDF
+        }
+        
+        // Bar chart hover effects
+        const bars = document.querySelectorAll('.bar');
+        bars.forEach(bar => {
+            bar.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'transform 0.2s';
+            });
+            
+            bar.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Update report time
+        function updateReportTime() {
+            const now = new Date();
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', options);
+            document.querySelector('.page-subtitle').textContent = 
+                `Generated: ${dateString} • Overall Performance`;
+        }
+        
+        // Initialize
+        updateReportTime();
+        
+        // Prevent zoom
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>

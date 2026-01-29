@@ -368,7 +368,7 @@
                     </div>
                     <div class="menu-text">Notifications</div>
                 </div>
-                <div class="menu-item" onclick="menuAction('settings')">
+                <div class="menu-item" onclick="loadSettings()">
                     <div class="menu-icon">
                         <i class="fas fa-cog"></i>
                     </div>
@@ -426,6 +426,19 @@
             pageFrame.src = page;
         }
         
+        // Load Settings Function
+        function loadSettings() {
+            closeMenu();
+            // Clear active navigation since Settings is not in bottom nav
+            navItems.forEach(nav => nav.classList.remove('active'));
+            
+            // Show loading
+            loading.style.display = 'flex';
+            
+            // Load settings page
+            pageFrame.src = 'settings.html';
+        }
+        
         // Menu Functions
         function openMenu() {
             menuOverlay.style.display = 'block';
@@ -458,9 +471,6 @@
                     break;
                 case 'notifications':
                     alert('Notifications');
-                    break;
-                case 'settings':
-                    alert('Settings');
                     break;
                 case 'help':
                     alert('Help Center');
